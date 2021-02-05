@@ -1,9 +1,9 @@
-import vk_api  # Пожалуй, можешь переписать init и вместо логина с паролем пихать сессию в self.vk (Если ты через юзера)
+#  проверил, нужна авторизация именно через юзера. Сообществам нельзя
+import vk_api
 
 
 class VkParser:
     def __init__(self, login, password):
-        # self.vk = vk_api.VkApi(token='')
         self.vk = vk_api.VkApi(login, password)
 
         try:
@@ -14,7 +14,7 @@ class VkParser:
         else:
             self.ok = True
 
-    def get_subscribes(self, id):
+    def get_subscribes(self, user_id):
         """
         :return: список групп и None, если удачно иначе None и:
                                                                 0, если всё ок
@@ -23,7 +23,7 @@ class VkParser:
                                                                 3, если иная ошибка
         """
         params = {
-            'user_id': str(id)
+            'user_id': str(user_id)
         }
         try:
             response = self.vk.method(method='users.getSubscriptions', values=params)
