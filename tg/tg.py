@@ -1,6 +1,7 @@
 from secret import token
+import random
 import telebot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import os
 import sys
 PACKAGE_PARENT = '..'
@@ -12,6 +13,8 @@ from tiktok import checks
 
 #adapter = Adapter()
 
+answers = []
+count = 0
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=['start'])
@@ -44,14 +47,32 @@ def get_option(message):
 
         bot.register_next_step_handler(message, smart_search)
     elif (message.text == 'Тест'):
-        bot.send_message(message.chat.id, "")
-        bot.register_next_step_handler(message, testing)
+        bot.send_message(message.chat.id, "Пройди тест, чтобы я мог понять, что тебе нравится и подыскать друзей!")
+        bot.send_message(message.chat.id, "Просто выбирай понравился тебе мем или нет.")
+
+        bot.register_next_step_handler(message, questions)
     else:
         bot.send_message(message.chat.id, '''Я не знаю такой опции. Выберите одну из списка!''')
 
 @bot.message_handler(func=lambda message: False, content_types=['text'])
-def testing:
-    pass
+def questions(message):
+    global count
+    count+=1
+    markup = InlineKeyboardMarkup()
+    button = InlineKeyboardButton(text='Лайк', callback_data=f'{count}_yes')
+    button = InlineKeyboardButton(text='Дизлайк', callback_data=f'{count}_no')
+    
+    markup.add(button)
+
+    bot.send_chat_action(message.chat.id, 'upload_photo')
+    r = random.randrange(1,5)
+    img = open(f'../memes/english/{r}.jpg', 'rb')
+    bot.send_photo(message.chat.id, img, caption='Вопрос #1', reply_markup=markup)
+    img.close() 
+    if (count == 10):
+        bot.send_message(message.chat.id, "Тест закончен. Ищу тебе наилучшие матчи...")
+        bot.register_next_step_handler(message, result)
+
 
 @bot.message_handler(func=lambda message: False, content_types=['text'])
 def smart_search(message):
@@ -70,16 +91,18 @@ def smart_search(message):
 def get_ticktok_nickname(message):
     name = message.text
 
-    if checks.is_valid_username(name):
+    if checks.get_liked_video_count(name):
         # ERROR: ошибка при вызове этого метода
+        '''
         if checks.check_likes_privacy(name):
             bot.send_message(message.chat.id, checks.get_liked_video_count("ali.pritchard"))
         else:
-            bot.send_message(message.chat.id, '''Поменяйте свои настройки конфиденциальности''', parse_mode="Markdown")
+            bot.send_message(message.chat.id, Поменяйте свои настройки конфиденциальности parse_mode="Markdown")
             bot.send_chat_action(message.chat.id, 'upload_photo')
             img = open('instruction.jpg', 'rb')
             bot.send_photo(message.chat.id, img, reply_to_message_id=message_id)
-            img.close()
+            img.close()'''
+        pass
     else:
         bot.send_message(message.chat.id, '''Такого ника не существует. Попробуйте другой!''', parse_mode="Markdown")
         bot.register_next_step_handler(message, get_ticktok_nickname)
@@ -87,10 +110,18 @@ def get_ticktok_nickname(message):
     print(name)
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def query_handler(call):
+    global answers
+
+    if "yes" in call.data: answers.append(1)
+    elif "no" in call.data: answers.append(0)
+    print(answers)
+    bot.register_next_step_handler(message, questions)
 
 
-
-
+bot.enable_save_next_step_handlers(delay=2)
+bot.load_next_step_handlers()
 
 
 bot.polling()
