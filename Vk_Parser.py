@@ -60,44 +60,7 @@ class VkParser:
     def get_humor_subscribes(self, user_id):
         groups, error = self.get_subscribes(user_id)
         if not error:
-            return api.get_activity(groups), 0
-        else:
-            return None, error
-
-    def get_liked_humor_post(self, user_id):
-        user_id = self.get_user_id(user_id)
-        response, error = self.get_humor_subscribes(user_id)
-        ans = set()
-        print('start')
-        if not error:
-            for group in response:
-                print(group)
-                group = -group  # В вк сообщества помечаются -id
-                params = {
-                    'owner_id': group,
-                    'count': 100,
-                }
-                try:
-                    posts = self.vk.method(method='wall.get', values=params)['items']
-                except Exception:
-                    return None, 3
-                for post in posts:
-                    post = post['id']
-                    params = {
-                        'user_id': user_id,
-                        'type': 'post',
-                        'owner_id': group,
-                        'item_id': post
-                    }
-                    try:
-                        isLiked = self.vk.method(method='likes.isLiked', values=params)
-                    except Exception:
-                        return None, 3
-                    if isLiked['liked']:
-                        ans.add((-group, post))
-                print('next')
-            return ans, None
-
+            return api.get_activity(groups), None
         else:
             return None, error
 
