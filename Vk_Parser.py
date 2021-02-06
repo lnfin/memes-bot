@@ -58,7 +58,7 @@ class VkParser:
         return ans
 
     def get_humor_subscribes(self, user_id):
-        groups, error = api.get_subscribes(user_id)
+        groups, error = self.vk.get_subscribes(user_id)
         if not error:
             return api.get_activity(groups), 0
         else:
