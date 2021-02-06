@@ -9,11 +9,12 @@ import sys
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
-#from tiktok import checks
+from users_db import UsersDB
+from VkParser import VkParser()
 
-#from adapter import Adapter
+db = UsersDB()
+vk = VkParser()
 
-#adapter = Adapter()
 
 answers = []
 count = 0
@@ -60,8 +61,8 @@ def get_option(message):
 @bot.message_handler(func=lambda message: False, content_types=['text'])
 def smart_search(message):
     if (message.text == "VK"):
-        
-        # TODO: когда будет вк парсер, прикрепить его сюда
+        bot.send_message(message.chat.id, "Отправь ссылку на свою страницу *VK*, чтобы я понял, что тебе нравится!", parse_mode="Markdown")
+        bot.register_next_step_handler(message, get_vk_link)
         pass
     elif (message.text == "TikTok"):
         bot.send_message(message.chat.id, '''Отправь мне свой ник в *Tik Tok*, чтобы я понял, что тебе нравится.''', parse_mode="Markdown")
@@ -69,6 +70,15 @@ def smart_search(message):
     else:
         bot.send_message(message.chat.id, "Выберите опцию из предложенных ниже!")
         bot.register_next_step_handler(message,smart_search)
+
+@bot.message_handler(func=lambda message: False, content_types=['text'])
+def get_vk_link(message):
+    link = message.text.splti('/')[-1]
+    vk_id = vk.get_user_id(link)
+    db.add_user("vk", vk_id)
+    
+    # TODO: функа добавляющая в бд
+    
 
 
 @bot.message_handler(func=lambda message: False, content_types=['text'])
@@ -337,6 +347,8 @@ def result(message):
     else:
             bot.send_message(message.chat.id, 'aeae')
             bot.register_next_step_handler(message, question1)
+
+    db.add_test_results("tg", message.from_user.id, answers)
 
     bot.send_message(message.chat.id, "Твои ответы записаны! Сейчас мы подберём тебе друзей...")
     
