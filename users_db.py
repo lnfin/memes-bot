@@ -27,6 +27,7 @@ class UsersDB(DB):
                             WHERE ? = ?""".format(tt_nm, sn_type, u_id))
         self.db.commit()
 
+    @correct_sn
     def is_tiktok(self, sn_type=None, u_id=None):
         return bool(self.cur.execute("""SELECT * FROM users 
                                         WHERE {} = {} and tt_nm != NULL""".format(sn_type, u_id)))
