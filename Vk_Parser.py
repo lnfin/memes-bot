@@ -58,13 +58,15 @@ class VkParser:
         return ans
 
     def get_humor_subscribes(self, user_id):
+        """Даёт список с группами 'Юмор' и None, либо None и код ошибки (См. Выше)"""
         groups, error = self.get_subscribes(user_id)
         if not error:
             return api.get_activity(groups), None
         else:
             return None, error
 
-    def get_user_id(self, name: str):
+    def get_user_id(self, name):
+        """Переводит короткое имя в id, если пихнуть id, то тоже вернёт id"""
         if name.isdigit():
             name = 'id' + name
         params = {'screen_name': name}
@@ -79,7 +81,7 @@ class VkParser:
 
 if __name__ == '__main__':
     db = DataBase()
-    LOGIN = '89211039709'
-    PASSWORD = '39Comar39Pchela39'
+    LOGIN = ''
+    PASSWORD = ''
     api = VkParser(LOGIN, PASSWORD)
     a = api.get_user_id('232266268')
