@@ -9,7 +9,11 @@ from configuration import *
 # Returns True if "likes history" is open for all people, False otherwise.
 def check_likes_privacy(username, proxy_obj=None) -> bool:
     res = api.userLikedbyUsername(username, count=1, proxy=proxy_obj, language='en', region='US')
-    return len(res) != 0
+    if len(res) == 0:
+        return False
+    else:
+        print(res)
+        return res
 
 
 # Returns count of videos which were liked by @username.
@@ -31,3 +35,4 @@ def is_valid_username(username, proxy_obj=None) -> bool:
     except exceptions.TikTokNotFoundError:
         return False
 
+check_likes_privacy("bigbrotherl0")
