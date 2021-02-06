@@ -58,9 +58,9 @@ class VkParser:
         return ans
 
     def get_humor_subscribes(self, user_id):
-        groups, error = self.vk.get_subscribes(user_id)
+        groups, error = self.get_subscribes(user_id)
         if not error:
-            return api.get_activity(groups), 0
+            return self.get_activity(groups), 0
         else:
             return None, error
 
@@ -69,4 +69,4 @@ if __name__ == '__main__':
     LOGIN = ''
     PASSWORD = ''
     api = VkParser(LOGIN, PASSWORD)
-    print(api.get_humor_subscribes(232266268)[0])
+    print(api.get_humor_subscribes(232266268))
