@@ -9,7 +9,7 @@ class Adapter:
     def __init__(self):
         self.db = Db()
 
-    def add_user(self, vk_id='', tg_id='', tt_id=''):
+    def add_user(self, vk_id='', tg_id='', tt_id=''):  # TODO Вероятно, это тоже придётся немного изменить
         if tg_id:
             self.db.add_user(sn_type=TG_ID, u_id=tg_id)
             if tt_id:
@@ -39,7 +39,25 @@ class Adapter:
 
             union = other_vk_data & user_vk_data
             if union > 0:
-                unions.append((other_id, union))
+                unions.append(((other_tg_id, other_vk_id), union))
 
         unions.sort(key= lambda x: x[1], reverse=True)
         return unions[:5]
+
+    def get_found_vk_friends(self, user_id, table=VK_ID):
+        ans = []
+        unions = self.found_vk_friends(user_id, table)
+        for other_ids, match in unions:
+            other_vk = other_ids[1]
+            other_tg = other_ids[0]
+            if table == VK_ID:
+                if other_vk:
+                    ans.append((f'vk.com{other_vk}', match))
+                else:
+                    pass # TODO перевод id тг в сслыку
+
+            elif table == TG_ID:
+                if other_tg:
+                    pass # TODO тут тоже
+                else:
+                    ans.append((f'vk.com{other_vk}', match))
