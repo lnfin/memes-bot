@@ -23,9 +23,13 @@ class UsersDB(DB):
 
     @correct_sn
     def add_tiktok_to_user(self, sn_type=None, u_id=None, tt_nm=None):
-        if self.is_user_in_db(sn_type=sn_type, u_id=u_id):
-            self.cur.execute("""UPDATE users SET tt_nm = {} 
-                                WHERE ? = ?""".format(tt_nm, sn_type, u_id))
+        self.cur.execute("""UPDATE users SET tt_nm = {} 
+                            WHERE ? = ?""".format(tt_nm, sn_type, u_id))
+        self.db.commit()
+
+    def is_tiktok(self, sn_type=None, u_id=None):
+        return bool(self.cur.execute("""SELECT * FROM users 
+                                        WHERE {} = {} and tt_nm != NULL""".format(sn_type, u_id)))
 
 
 if __name__ == "__main__":
