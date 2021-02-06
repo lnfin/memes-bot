@@ -5,6 +5,34 @@ from db import DB, correct_sn
 
 
 class UsersDB(DB):
+    @correct_sn
+    def add_test_results(self, sn_type=None, u_id=None, test_r=None):
+        test_r = " ".join([str(i) for i in test_r])
+        self.cur.execute("""UPDATE users SET test_result = \"{}\" WHERE {} = {}""".
+                         format(test_r, sn_type, u_id))
+ 
+    @correct_sn
+    def get_matches(self, sn_type=None, u_id=None):
+        users_test = self.cur.execute(
+            "SELECT test_result FROM users WHERE {} = {}".format(sn_type, u_id)).fetchall()[
+            0][0].split()
+        matches = self.cur.execute("SELECT * FROM users".format()).fetchall()
+        counter = []
+        for m in matches:
+            if not m[-1]:
+                continue
+            ids = m[1:3]
+            if u_id in ids:
+                continue
+            test = [str(n) for n in m[-1].split()]
+            c = 0
+            for i in range(len(users_test)):
+                if users_test[i] == test[i]:
+                    c += 1
+            counter.append((ids, c))
+        counter.sort(key=lambda x: x[1], reverse=True)
+        return counter[:5]
+        
     def __init__(self):
         super().__init__()
         self.db = sqlite3.connect(os.path.join("data", "database.db"))
