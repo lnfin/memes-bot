@@ -95,7 +95,7 @@ class UsersDB(DB):
             ans.append((user, match))
 
         ans.sort(key=lambda x: x[1], reverse=True)
-        return ans[:5]
+        return ans
 
         
 if __name__ == "__main__":
