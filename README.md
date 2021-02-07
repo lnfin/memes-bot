@@ -1,4 +1,4 @@
-# Find firends by memes
+# Find friends by memes
 
 Бот сделан в рамках хакатона "CyberSchool". С 💙 от команды 1nf1nity.
 
