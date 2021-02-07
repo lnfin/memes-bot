@@ -1,4 +1,4 @@
-from secret import token
+from secret import token, LOGIN, PASSWORD
 import random
 import telebot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
@@ -13,8 +13,7 @@ from users_db import UsersDB
 from Vk_Parser import VkParser
 from vk_subs_db import VkSubsDB
 
-LOGIN = '79814565474'
-PASSWORD = 'hacaton2021'
+
 r = 1
 db = UsersDB()
 vk = VkParser(LOGIN, PASSWORD)
