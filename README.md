@@ -8,7 +8,7 @@
 + Поиск друзей по лайкнутым видео в TikTok (не доделано, проблема с либой [TikTok-Api](https://github.com/davidteather/TikTok-Api))
 
 ## Использование
-Бот доступен в Telegram --> @fm3m3sbot
+Бот доступен в Telegram --> @fm3m3sbot  
 Или Вы можете поднять своего перед этим добавив файл **secret.py** в папку **tg** с токеном бота.
 
 
