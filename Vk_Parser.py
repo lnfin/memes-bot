@@ -1,5 +1,5 @@
 import vk_api  # Пожалуй, можешь переписать init и вместо логина с паролем пихать сессию в self.vk (Если ты через юзера)
-from database import DataBase
+#from database import DataBase
 
 
 class VkParser:
@@ -80,8 +80,7 @@ class VkParser:
 
 
 if __name__ == '__main__':
-    db = DataBase()
-    LOGIN = ''
-    PASSWORD = ''
+    #db = DataBase()
+
     api = VkParser(LOGIN, PASSWORD)
     a = api.get_user_id('232266268')

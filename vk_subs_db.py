@@ -6,22 +6,24 @@ from db import DB, correct_sn
 
 class VkSubsDB(DB):
     def __init__(self):
-        super().__init__()
-        self.db = sqlite3.connect(os.path.join("data", "database.db"))
-        self.cur = self.db.cursor()
+        self.db_name = 'data/database.db'
 
-    @correct_sn
+
     def add_sub(self, sn_type=None, u_id=None, sub=None):
-        self.cur.execute(
+        conn = sqlite3.connect(self.db_name)
+        cur = conn.cursor()  
+        cur.execute(
             "INSERT INTO subs({}, sub) VALUES({}, {})".format(sn_type, u_id, "\"{}\"".format(sub)))
-        self.db.commit()
+        conn.commit()
+        conn.close()
 
-    @correct_sn
     def get_matches(self, sn_type=None, u_id=None):
-        user_subs = [str(i[0]) for i in self.cur.execute(
+        conn = sqlite3.connect(self.db_name)
+        cur = conn.cursor()  
+        user_subs = [str(i[0]) for i in cur.execute(
             "SELECT sub FROM subs WHERE {} = {}".format(sn_type, u_id)).fetchall()]
         user_subs = "(\"{}\")".format("\", \"".join(user_subs))
-        matches = self.cur.execute("SELECT * FROM subs WHERE sub IN {} AND {} != {}".format(
+        matches = cur.execute("SELECT * FROM subs WHERE sub IN {} AND {} != {}".format(
             user_subs, sn_type, u_id)).fetchall()
         counter = {}
         for m in matches:
