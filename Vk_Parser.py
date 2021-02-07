@@ -61,7 +61,7 @@ class VkParser:
         """Даёт список с группами 'Юмор' и None, либо None и код ошибки (См. Выше)"""
         groups, error = self.get_subscribes(user_id)
         if not error:
-            return api.get_activity(groups), None
+            return self.get_activity(groups), None
         else:
             return None, error
 
