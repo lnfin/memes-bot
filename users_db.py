@@ -76,6 +76,26 @@ class UsersDB(DB):
                 ans.append(((vk_id, tg_id), cost))
         ans.sort(key=lambda x: x[1], reverse=True)
         return ans[:10]
+    
+    def get_subscribe_match(self, subscribes):
+        """Возвращает list с 5 (tg_id, совпадений) с наибольшими совпадениями"""
+        matches = {}
+        for subscribe in subscribes:
+            users = set()
+            results = self.cur.execute(f'''SELECT tg_id FROM subs WHERE sup = {subscribe}''').fetchall()
+            for result in results:
+                other_id = result[0]
+                if other_id not in users:
+                    try:
+                        matches[other_id] += 1
+                    except Exception:
+                        matches[other_id] = 1
+        ans = []
+        for user, match in matches.items():
+            ans.append((user, match))
+
+        ans.sort(key=lambda x: x[1], reverse=True)
+        return ans[:5]
 
         
 if __name__ == "__main__":
